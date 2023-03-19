@@ -1,0 +1,15 @@
+.sign__subtitle {
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17px;
+    text-align: center;
+    margin: 15px auto 0;
+    text-decoration: none;
+    transition: opacity .2s linear;
+}
+
+.sign__subtitle:hover {
+   opacity: 0.6;
+}
