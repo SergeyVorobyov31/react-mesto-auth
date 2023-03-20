@@ -213,7 +213,7 @@ function App() {
                 </div>}/>
             </Route>
             
-            <Route path="/sign-in" element={<Login handleLogin={handleLogin}/>} />
+            <Route path="/sign-in" element={<Login handleLogin={handleLogin} onErrorPopup={popupErrorOpen} list={<ErrorPopup isOpenErrorPopup={isErrorPopup} onCloseErrorPopup={closePopups} />}/>} />
             <Route path="/sign-up" element={<Registration onSuccessPopup={popupSuccessOpen} onErrorPopup={popupErrorOpen} list={[<SuccessPopup isOpenSuccessPopup={isSuccessPopup} onCloseSuccessPopup={popupSuccessClose}/>, <ErrorPopup isOpenErrorPopup={isErrorPopup} onCloseErrorPopup={closePopups} />]}/>} />
         </Routes>
     );
