@@ -1,5 +1,6 @@
 class Api {
     constructor(options) {
+        this._options = options;
         this._url = options.baseUrl;
         this._id = options.headers.authorization;
     }
@@ -13,50 +14,38 @@ class Api {
 
     getInitialCards() {
         return fetch(`${this._url}/cards`, {
-                headers: {
-                    authorization: `${this._id}`
-                }
+                headers: this._options.headers
         })
         .then(res => this._checkResponse(res))
         .then((result) => {
             return result
         })
-        .catch(err => console.log(err))
     }
 
     getUserData() {
         return fetch(`${this._url}/users/me`, {
-            headers: {
-                authorization: `${this._id}`
-            }
+            headers: this._options.headers
         })
         .then(res => this._checkResponse(res))
         .then((result) => {
             return result
         })
-        .catch(err => console.log(err))
     }
 
     getUserId() {
         return fetch(`${this._url}/users/me`, {
-            headers: {
-                authorization: `${this._id}`
-            }
+            headers: this._options.headers
         })
         .then(res => this._checkResponse(res))
         .then((result) => {
             return result._id
         })
-        .catch(err => console.log(err))
     }
 
     sendUserData(nameProfile, infoProfile) {
         return fetch(`${this._url}/users/me`, {
             method: 'PATCH',
-            headers: {
-              authorization: `${this._id}`,
-              'Content-Type': 'application/json'
-            },
+            headers: this._options.headers,
             body: JSON.stringify({
               name: `${nameProfile}`,
               about: `${infoProfile}`
@@ -68,10 +57,7 @@ class Api {
     sendNewCard(newCard) {
         return fetch(`${this._url}/cards`, {
             method: 'POST',
-            headers: {
-              authorization: `${this._id}`,
-              'Content-Type': 'application/json'
-            },
+            headers: this._options.headers,
             body: JSON.stringify({
               link: `${newCard.link}`,
               name: `${newCard.name}`
@@ -83,10 +69,7 @@ class Api {
     sendNewAvatar(avatarUrl) {
         return fetch(`${this._url}/users/me/avatar`, {
             method: 'PATCH',
-            headers: {
-              authorization: `${this._id}`,
-              'Content-Type': 'application/json'
-            },
+            headers: this._options.headers,
             body: JSON.stringify({
               avatar: `${avatarUrl}`
             })
@@ -97,10 +80,7 @@ class Api {
     deleteCard(cardId) {
         return fetch(`${this._url}/cards/${cardId}`, {
             method: 'DELETE',
-            headers: {
-              authorization: `${this._id}`,
-              'Content-Type': 'application/json'
-            }
+            headers: this._options.headers
         })
         .then(res => this._checkResponse(res))
     }
@@ -109,21 +89,16 @@ class Api {
         if(isLike) {
             return fetch(`${this._url}/cards/${cardId}/likes`, {
                 method: "PUT",
-                headers: {
-                    authorization: `${this._id}`
-                }
+                headers: this._options.headers
             })
             .then(res => this._checkResponse(res))
             .catch(err => console.log(err))
         } else {
             return fetch(`${this._url}/cards/${cardId}/likes`, {
                 method: "DELETE",
-                headers: {
-                    authorization: `${this._id}`
-                }
+                headers: this._options.headers
             })
             .then(res => this._checkResponse(res))
-            .catch(err => console.log(err))
         }
     }
 }

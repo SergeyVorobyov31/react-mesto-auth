@@ -25,13 +25,11 @@ function Registration({element: Component, ...props}) {
         .then((res) => {
             if(res.data) {
                 props.onSuccessPopup();
-            } 
-            else {
-                props.onErrorPopup();
             }
         })
         .catch((err) => {
             console.log(err);
+            props.onErrorPopup();
         })
     }
 
@@ -45,14 +43,15 @@ function Registration({element: Component, ...props}) {
             <div className="sign__container">
                 <form className="sign__form" onSubmit={handleSubmit}>
                     <h2 className="sign__header">Регистрация</h2>
-                    <input className="sign__input sign__input_type_email" type="email" placeholder="Email" name="email" id="email-input" minLength="2" maxLength="50" onChange={handleChange} required />
-                    <input className="sign__input sign__input_type_password" type="password" placeholder="Пароль" name="password" id="password-input" minLength="2" maxLength="50" onChange={handleChange} required />
+                    <input className="sign__input sign__input_type_email" type="email" placeholder="Email" name="email" id="email-input" minLength="2" maxLength="50" onChange={handleChange} value={formValue.email} required />
+                    <input className="sign__input sign__input_type_password" type="password" placeholder="Пароль" name="password" id="password-input" minLength="2" maxLength="50" onChange={handleChange} value={formValue.password} required />
                     <button className="sign__button" type="submit">Зарегистрироваться</button>
                     <Link className="sign__subtitle" to="/sign-in">Уже зарегистрированы? Войти</Link>
                 </form>
             </div>
             <div>
-                {props.list}
+                {props.successComponent}
+                {props.errorComponent}
             </div>
         </div>
     );

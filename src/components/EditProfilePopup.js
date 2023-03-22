@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function EditProfilePopup({isOpen, onClose, currentUser, onUpdateUser}) {
+function EditProfilePopup({isOpen, onClose, currentUser, onUpdateUser, buttonText}) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
@@ -41,7 +41,7 @@ function EditProfilePopup({isOpen, onClose, currentUser, onUpdateUser}) {
                     <span className="popup__input-error job-input-error"></span>
                 </div>
             </>}
-            buttonText = "Сохранить" 
+            buttonText = {buttonText} 
         />
     )
 }

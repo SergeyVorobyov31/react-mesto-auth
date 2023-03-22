@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
+function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, buttonText}) {
     const avatarRef = useRef(0);
 
 
@@ -23,7 +23,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
                     <span className="popup__input-error avatar-input-error"></span>
                 </div>
             }
-            buttonText = "Сохранить"
+            buttonText = {buttonText}
         />
     )
 }

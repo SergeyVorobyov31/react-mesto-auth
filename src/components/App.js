@@ -11,12 +11,14 @@ import CurrentUserContext from "../context/CurrentUserContext.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
-import SuccessPopup from "./SuccessPopup.js";
-import ErrorPopup from "./ErrorPopup.js";
 import Login from "./Login.js";
 import Registration from "./Registration.js";
 import ProtectedRouteElement from "./ProtectedRouteElement.js";
 import * as auth from "../utils/auth.js";
+
+import InfoToolTip from "./InfoToolTip.js";
+import errorLogin from '../images/errorLogin.png';
+import success from '../images/success.png';
 
 
 function App() {
@@ -31,14 +33,28 @@ function App() {
     const [selectedCard, setSelectedcard] = useState({});
     const [currentUser, setCurentUser] = useState({});
     const [loggedIn, setLoggedIn] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isErrorPopup || isSuccessPopup;
+    let buttonTextProfile = isLoading ? "Сохранение..." : "Сохранить";
+    let buttonTextCard = isLoading ? "Сохранение..." : "Создать";
     const navigate = useNavigate();
-
     
     useEffect(() => {
         fetchUserData();
         getDefaultCard();
         handleTokenCheck();
-    }, [])
+        function closeByEscape(evt) {
+            if(evt.key === 'Escape') {
+              closePopups();
+            }
+          }
+          if(isOpen) {
+            document.addEventListener('keydown', closeByEscape);
+            return () => {
+              document.removeEventListener('keydown', closeByEscape);
+            }
+          }
+    }, [isOpen])
     
     function fetchUserData() {
         api.getUserData()
@@ -49,34 +65,31 @@ function App() {
     }
 
     function popupSuccessOpen() {
-        document.addEventListener("keydown", handleEscClose);
         setIsSuccessPopup(true);
     }
 
     function popupSuccessClose() {
         setIsSuccessPopup(false);
-        document.removeEventListener("keydown", handleEscClose);
         navigate("/sign-in", {replace:true})
     }
 
     function popupErrorOpen() {
-        document.addEventListener("keydown", handleEscClose);
         setIsErrorPopup(true);
     }
 
     function popupProfileOpen() {
-        document.addEventListener("keydown", handleEscClose);
+        setIsLoading(false);
         setIsOpenProfilePopup(true);
     }
 
     function popupAvatarOpen() {
+        setIsLoading(false);
         setIsOpenAvatarPopup(true);
-        document.addEventListener("keydown", handleEscClose);
     }
 
     function popupCardOpen() {
+        setIsLoading(false);
         setIsOpenCardPopup(true);
-        document.addEventListener("keydown", handleEscClose);
     }
 
     function closePopups() {
@@ -85,7 +98,7 @@ function App() {
         setIsOpenCardPopup(false);
         setIsOpenPopupImage(false);
         setIsErrorPopup(false);
-        document.removeEventListener("keydown", handleEscClose);
+        setIsLoading(false);
     }
 
     function signOut(){
@@ -113,7 +126,7 @@ function App() {
     function handleCardClick(card) {
         setIsOpenPopupImage(true);
         setSelectedcard(card);
-        document.addEventListener("keydown", handleEscClose);
+        // document.addEventListener("keydown", handleEscClose);
     }
 
     function handleCardLike(card) {
@@ -138,41 +151,58 @@ function App() {
     }
 
     function handleUpdateUser(name, about) {
+        setIsLoading(false);
         api.sendUserData(name, about)
         .then((data) => {;
             setCurentUser(data);
             closePopups();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => {
+            buttonTextProfile = isLoading? 'Сохранение...' : 'Сохранить';
+            setIsLoading(true);
+        })
     }
 
     function handleUpdateAvatar(avatarUrl) {
+        setIsLoading(false);
         api.sendNewAvatar(avatarUrl)
         .then((data) => {
             setCurentUser(data);
             closePopups();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => {
+            buttonTextProfile = isLoading? 'Сохранение...' : 'Сохранить';
+            setIsLoading(true);
+        })
     }
 
     function handleAddPlaceSubmit(newCard) {
+        setIsLoading(false);
         api.sendNewCard(newCard)
         .then((data) => {
             setInitialCards([data, ...cards]);
             closePopups();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => {
+            buttonTextCard = isLoading? 'Сохранение...' : 'Создать';
+            setIsLoading(true);
+        })
     }
 
     function handleTokenCheck() {
         if (localStorage.getItem('jwt')){
             const jwt = localStorage.getItem('jwt');
-            auth.checkToken(jwt).then((res) => {
+            auth.checkToken(jwt)
+            .then((res) => {
                 if (res){
                     setLoggedIn(true);
                     navigate("/", {replace: true})
                 }
-            });
+            })
+            .catch(err => console.log(err));
         }
     }
 
@@ -200,9 +230,9 @@ function App() {
                         />
                         <ImagePopup card={selectedCard} isOpen={isOpenPopupImage} onClose={closePopups}/>
                         <Footer />
-                        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closePopups} currentUser={currentUser} onUpdateUser={handleUpdateUser} />
-                        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closePopups} onUpdateAvatar={handleUpdateAvatar} />
-                        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closePopups} onUpdateCards={handleAddPlaceSubmit}/>
+                        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closePopups} currentUser={currentUser} onUpdateUser={handleUpdateUser} buttonText={buttonTextProfile}/>
+                        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closePopups} onUpdateAvatar={handleUpdateAvatar} buttonText={buttonTextProfile}/>
+                        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closePopups} onUpdateCards={handleAddPlaceSubmit} buttonText={buttonTextCard}/>
                         <PopupWithForm 
                             name = "delete"
                             title = "Вы уверены?"
@@ -213,8 +243,8 @@ function App() {
                 </div>}/>
             </Route>
             
-            <Route path="/sign-in" element={<Login handleLogin={handleLogin} onErrorPopup={popupErrorOpen} list={<ErrorPopup isOpenErrorPopup={isErrorPopup} onCloseErrorPopup={closePopups} />}/>} />
-            <Route path="/sign-up" element={<Registration onSuccessPopup={popupSuccessOpen} onErrorPopup={popupErrorOpen} list={[<SuccessPopup isOpenSuccessPopup={isSuccessPopup} onCloseSuccessPopup={popupSuccessClose}/>, <ErrorPopup isOpenErrorPopup={isErrorPopup} onCloseErrorPopup={closePopups} />]}/>} />
+            <Route path="/sign-in" element={<Login handleLogin={handleLogin} onErrorPopup={popupErrorOpen} list={<InfoToolTip isOpen={isErrorPopup} onClose={closePopups} image={errorLogin} popupText={"Что-то пошло не так! Попробуйте ещё раз."} />}/>} />
+            <Route path="/sign-up" element={<Registration onSuccessPopup={popupSuccessOpen} onErrorPopup={popupErrorOpen} successComponent={<InfoToolTip isOpen={isSuccessPopup} onClose={popupSuccessClose} image={success} popupText={"Вы успешно зарегистрировались!"} />} errorComponent={<InfoToolTip isOpen={isErrorPopup} onClose={closePopups} image={errorLogin} popupText={"Что-то пошло не так! Попробуйте ещё раз."} />}/>} />
         </Routes>
     );
 }

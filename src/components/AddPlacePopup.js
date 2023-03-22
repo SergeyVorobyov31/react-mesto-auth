@@ -1,7 +1,7 @@
 import { useState } from "react";
 import PopupWithForm from "./PopupWithForm";
 
-function AddPlacePopup({isOpen, onClose, onUpdateCards}) {
+function AddPlacePopup({isOpen, onClose, onUpdateCards, buttonText}) {
     const [name, setName] = useState("");
     const [link, setLink] = useState("");
 
@@ -28,16 +28,16 @@ function AddPlacePopup({isOpen, onClose, onUpdateCards}) {
             children = {
                 <>
                     <div className="popup__field popup__field_top">
-                        <input className="popup__input popup__input_type_title" type="text" placeholder="Название" name="name" id="title-input" minLength="2" maxLength="30"  defaultValue={name} onChange={handleChangeName} required />
+                        <input className="popup__input popup__input_type_title" type="text" placeholder="Название" name="name" id="title-input" minLength="2" maxLength="30"  value={name} onChange={handleChangeName} required />
                         <span className="popup__input-error title-input-error"></span>
                     </div>
                     <div className="popup__field popup__field_bottom">    
-                        <input className="popup__input popup__input_type_link" type="url" placeholder="Ссылка на картинку" name="link" id="link-input"  defaultValue={link} onChange={handleChangeLink} required />
+                        <input className="popup__input popup__input_type_link" type="url" placeholder="Ссылка на картинку" name="link" id="link-input"  value={link} onChange={handleChangeLink} required />
                         <span className="popup__input-error link-input-error"></span>
                     </div>
                 </>
             }
-            buttonText = "Создать"
+            buttonText = {buttonText}
         />
     )
 }

@@ -49,8 +49,8 @@ function Login(props) {
             <div className="sign__container">
                 <form className="sign__form" onSubmit={handleSubmit}>
                     <h2 className="sign__header">Вход</h2>
-                    <input className="sign__input sign__input_type_email" type="email" placeholder="Email" name="email" id="email-input" minLength="2" maxLength="50" onChange={handleChange} required />
-                    <input className="sign__input sign__input_type_password" type="password" placeholder="Пароль" name="password" id="password-input" minLength="2" maxLength="50" onChange={handleChange} required />
+                    <input className="sign__input sign__input_type_email" type="email" placeholder="Email" name="email" id="email-input" minLength="2" maxLength="50" onChange={handleChange} value={formValue.email} required />
+                    <input className="sign__input sign__input_type_password" type="password" placeholder="Пароль" name="password" id="password-input" minLength="2" maxLength="50" onChange={handleChange} value={formValue.password} required />
                     <button className="sign__button" type="submit">Войти</button>
                 </form>
             </div>
