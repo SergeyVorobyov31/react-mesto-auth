@@ -35,14 +35,15 @@ function App() {
     const [loggedIn, setLoggedIn] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isErrorPopup || isSuccessPopup;
-    let buttonTextProfile = isLoading ? "Сохранение..." : "Сохранить";
-    let buttonTextCard = isLoading ? "Сохранение..." : "Создать";
     const navigate = useNavigate();
     
     useEffect(() => {
         fetchUserData();
         getDefaultCard();
         handleTokenCheck();
+    }, [])
+
+    useEffect(() => {
         function closeByEscape(evt) {
             if(evt.key === 'Escape') {
               closePopups();
@@ -55,6 +56,7 @@ function App() {
             }
           }
     }, [isOpen])
+    
     
     function fetchUserData() {
         api.getUserData()
@@ -107,14 +109,6 @@ function App() {
         navigate("/sign-in", {replace:true});
     }
 
-    function handleEscClose(evt) {
-        if (evt) {
-            if(evt.key === "Escape") {
-                closePopups();
-            }
-        }
-    }
-
     function getDefaultCard() {
         api.getInitialCards()
         .then(data => {
@@ -126,7 +120,6 @@ function App() {
     function handleCardClick(card) {
         setIsOpenPopupImage(true);
         setSelectedcard(card);
-        // document.addEventListener("keydown", handleEscClose);
     }
 
     function handleCardLike(card) {
@@ -159,7 +152,6 @@ function App() {
         })
         .catch((err) => console.log(err))
         .finally(() => {
-            buttonTextProfile = isLoading? 'Сохранение...' : 'Сохранить';
             setIsLoading(true);
         })
     }
@@ -173,7 +165,6 @@ function App() {
         })
         .catch((err) => console.log(err))
         .finally(() => {
-            buttonTextProfile = isLoading? 'Сохранение...' : 'Сохранить';
             setIsLoading(true);
         })
     }
@@ -187,7 +178,6 @@ function App() {
         })
         .catch((err) => console.log(err))
         .finally(() => {
-            buttonTextCard = isLoading? 'Сохранение...' : 'Создать';
             setIsLoading(true);
         })
     }
@@ -230,9 +220,9 @@ function App() {
                         />
                         <ImagePopup card={selectedCard} isOpen={isOpenPopupImage} onClose={closePopups}/>
                         <Footer />
-                        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closePopups} currentUser={currentUser} onUpdateUser={handleUpdateUser} buttonText={buttonTextProfile}/>
-                        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closePopups} onUpdateAvatar={handleUpdateAvatar} buttonText={buttonTextProfile}/>
-                        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closePopups} onUpdateCards={handleAddPlaceSubmit} buttonText={buttonTextCard}/>
+                        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closePopups} currentUser={currentUser} onUpdateUser={handleUpdateUser} buttonText={isLoading? 'Сохранение...' : 'Сохранить'}/>
+                        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closePopups} onUpdateAvatar={handleUpdateAvatar} buttonText={isLoading? 'Сохранение...' : 'Сохранить'}/>
+                        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closePopups} onUpdateCards={handleAddPlaceSubmit} buttonText={isLoading? 'Сохранение...' : 'Создать'}/>
                         <PopupWithForm 
                             name = "delete"
                             title = "Вы уверены?"
